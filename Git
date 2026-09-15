@@ -14,3 +14,20 @@ git config --global --unset https.proxy
 2. Cambiar al Motor SSL/Schannel Nativo de Windows
 En entornos corporativos o Windows con antivirus/firewalls estrictos, el motor por defecto de Git (OpenSSL) suele fallar en el puerto 443. Forzar el uso del almacén de certificados de Windows lo resuelve:
 git config --global http.sslBackend schannel
+
+Paso 2: Limpiar Carpetas Temporales (obj/ y bin/) del Commit Local
+Como se observa en la terminal de la imagen, agregaste carpetas obj/ antes de tener un .gitignore. Limpia el índice local sin perder tu código ejecutando:
+
+PowerShell
+# 1. Crear el .gitignore oficial de .NET
+dotnet new gitignore
+
+# 2. Remover del rastreo de Git los archivos cacheados (como obj/ y bin/)
+git rm -r --cached .
+
+# 3. Volver a agregar los archivos (esta vez .gitignore excluirá bin y obj)
+git add .
+
+# 4. Actualizar el commit local
+git commit -m "fix: agregar gitignore y remover archivos temporales de compilacion"
+
