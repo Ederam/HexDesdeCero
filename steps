@@ -64,3 +64,4 @@ dotnet sln add Tienda.Domain.Tests/Tienda.Domain.Tests.csproj
 
 # 3. Vincular la referencia ÚNICAMENTE hacia Tienda.Domain
 dotnet add Tienda.Domain.Tests/Tienda.Domain.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
+
