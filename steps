@@ -26,3 +26,41 @@ dotnet add Tienda.Application/Tienda.Application.csproj reference Tienda.Domain/
 # 9. Compilar la solución para verificar la integridad
 dotnet build
 
+# Pruebas Unitarias
+
+# 1. Crear el proyecto de pruebas con xUnit
+dotnet new xunit -n Tienda.Application.Tests -f net8.0
+
+# 2. Agregar el proyecto de pruebas a la Solución (.sln)
+dotnet sln add Tienda.Application.Tests/Tienda.Application.Tests.csproj
+
+# 3. Vincular referencias (Las pruebas necesitan conocer a Aplicación y a Dominio)
+dotnet add Tienda.Application.Tests/Tienda.Application.Tests.csproj reference Tienda.Application/Tienda.Application.csproj
+dotnet add Tienda.Application.Tests/Tienda.Application.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
+
+# 4. Instalar NSubstitute (Librería para crear Mocks/Simuladores de Interfaces)
+dotnet add Tienda.Application.Tests/Tienda.Application.Tests.csproj package NSubstitute
+
+# Orden recomendado para la construcción
+1. DOMINIO (El Núcleo)      --> Clases de Negocio, Value Objects, Excepciones e Interfaces (Puertos).
+2. APLICACIÓN (Casos de Uso) --> DTOs y Servicios de Aplicación que usan el Dominio.
+3. PRUEBAS UNITARIAS         --> Verifican que la Aplicación y el Dominio funcionen bien aislados.
+4. INFRAESTRUCTURA          --> Base de datos, Entity Framework, Repositorios concretos.
+5. API WEB (Controladores)   --> Endpoints HTTP para exponer el sistema al mundo.
+
+Enfoque 2: Proyecto de Pruebas por Capa (Tienda.Domain.Tests, Tienda.Application.Tests)
+Un proyecto de pruebas dedicado para cada proyecto/capa principal.
+
+Plaintext
+Tienda.Domain.Tests/        --> Solo referencia a Tienda.Domain
+Tienda.Application.Tests/   --> Referencia a Tienda.Application y Tienda.Domain
+Tienda.Infrastructure.Tests/--> Referencia a Tienda.Infrastructure, Application y Dom
+
+# 1. Crear el proyecto de pruebas de Dominio
+dotnet new xunit -n Tienda.Domain.Tests -f net8.0
+
+# 2. Integrarlo a la solución
+dotnet sln add Tienda.Domain.Tests/Tienda.Domain.Tests.csproj
+
+# 3. Vincular la referencia ÚNICAMENTE hacia Tienda.Domain
+dotnet add Tienda.Domain.Tests/Tienda.Domain.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
