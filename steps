@@ -1,0 +1,28 @@
+# 1. Ubicarnos en la ruta exacta de trabajo
+cd "C:\DEV_ER\Mis Archivos\Projects\APIs\Hex"
+
+# 2. Limpiar contenido previo para evitar conflictos de carpetas anidadas (Opcional si quieres empezar de cero e impecable)
+# Si deseas borrar lo anterior y recrear todo limpio, descomenta las siguientes 2 líneas:
+# Remove-Item -Recurse -Force Tienda.Domain, Tienda.Application, Tienda.sln -ErrorAction SilentlyContinue
+
+# 3. Crear el archivo de solución (.sln) en la raíz Hex
+dotnet new sln -n Tienda
+
+# 4. Crear el proyecto Tienda.Domain (Class Library)
+dotnet new classlib -n Tienda.Domain -f net8.0
+
+# 5. Agregar Tienda.Domain a la Solución
+dotnet sln add Tienda.Domain/Tienda.Domain.csproj
+
+# 6. Crear el proyecto Tienda.Application (Class Library)
+dotnet new classlib -n Tienda.Application -f net8.0
+
+# 7. Agregar Tienda.Application a la Solución
+dotnet sln add Tienda.Application/Tienda.Application.csproj
+
+# 8. Vincular dependencias: Tienda.Application -> Tienda.Domain
+dotnet add Tienda.Application/Tienda.Application.csproj reference Tienda.Domain/Tienda.Domain.csproj
+
+# 9. Compilar la solución para verificar la integridad
+dotnet build
+
