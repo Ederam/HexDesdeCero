@@ -5,3 +5,12 @@ git commit -m "first commit"
 git branch -M main
 git remote add origin https://github.com/Ederam/HexDesdeCero.git
 git push -u origin main
+
+1. Desactivar Proxies Residuales en Git
+Si estás en la red de la empresa o usas VPN, Git a veces guarda configuraciones de proxy que bloquean la salida:
+git config --global --unset http.proxy
+git config --global --unset https.proxy
+
+2. Cambiar al Motor SSL/Schannel Nativo de Windows
+En entornos corporativos o Windows con antivirus/firewalls estrictos, el motor por defecto de Git (OpenSSL) suele fallar en el puerto 443. Forzar el uso del almacén de certificados de Windows lo resuelve:
+git config --global http.sslBackend schannel
