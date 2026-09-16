@@ -65,3 +65,37 @@ dotnet sln add Tienda.Domain.Tests/Tienda.Domain.Tests.csproj
 # 3. Vincular la referencia ÚNICAMENTE hacia Tienda.Domain
 dotnet add Tienda.Domain.Tests/Tienda.Domain.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
 
+# Configurar el Proyecto Tienda.Infrastructure
+Abre PowerShell en la raíz del proyecto (C:\DEV_ER\Mis Archivos\Projects\APIs\Hex) y ejecuta:
+
+# 1. Crear el proyecto Class Library para Infraestructura
+dotnet new classlib -n Tienda.Infrastructure -f net8.0
+
+# 2. Agregar el proyecto a la solución
+dotnet sln add Tienda.Infrastructure/Tienda.Infrastructure.csproj
+
+# 3. Agregar referencias a Application y Domain
+dotnet add Tienda.Infrastructure/Tienda.Infrastructure.csproj reference Tienda.Application/Tienda.Application.csproj
+dotnet add Tienda.Infrastructure/Tienda.Infrastructure.csproj reference Tienda.Domain/Tienda.Domain.csproj
+
+# 4. Instalar paquetes de Entity Framework Core InMemory para pruebas/desarrollo
+dotnet add Tienda.Infrastructure/Tienda.Infrastructure.csproj package Microsoft.EntityFrameworkCore.InMemory
+
+COmo salio Error
+por la version ya que lo anterior es para version de .net 10
+dotnet add Tienda.Infrastructure/Tienda.Infrastructure.csproj package Microsoft.EntityFrameworkCore.InMemory -v 8.0.11
+
+# Crear el Proyecto de Pruebas de Infraestructura
+
+# 1. Crear el proyecto de pruebas para Infraestructura
+dotnet new xunit -n Tienda.Infrastructure.Tests -f net8.0
+
+# 2. Agregar a la solución
+dotnet sln add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj
+
+# 3. Referenciar los proyectos correspondientes
+dotnet add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj reference Tienda.Infrastructure/Tienda.Infrastructure.csproj
+dotnet add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
+
+# 4. Instalar EF Core InMemory en el proyecto de pruebas (Versión 8.0.11)
+dotnet add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj package Microsoft.EntityFrameworkCore.InMemory -v 8.0.11
