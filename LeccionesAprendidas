@@ -1,0 +1,4 @@
+Problema: El error Unable to render this definition: The provided definition does not specify a valid version field ocurre en Swagger UI al utilizar la plantilla por defecto de Minimal API en .NET 8, ya que la especificación OpenAPI generada en memoria carece de la propiedad de versión explícita requerida por la interfaz gráfica.
+
+Solución: Reemplazar la configuración por defecto registrando explícitamente el documento con options.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }) y asegurando que la ruta del endpoint en el middleware coincida con /swagger/v1/swagger.json.
+

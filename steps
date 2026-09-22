@@ -99,3 +99,41 @@ dotnet add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj refere
 
 # 4. Instalar EF Core InMemory en el proyecto de pruebas (Versión 8.0.11)
 dotnet add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj package Microsoft.EntityFrameworkCore.InMemory -v 8.0.11
+
+# 1. Ejecutar TODAS las pruebas de la solución (Domain.Tests, Application.Tests e Infrastructure.Tests)
+dotnet test
+
+# 2. Registrar el commit manual para la Capa de Infraestructura y sus Pruebas
+git add .
+git commit -m "feat(infrastructure): implement EF Core DbContext, OrderRepository, Mapper and Infrastructure unit tests"
+
+# 3. Enviar cambios al repositorio remoto
+git push
+
+# 1. Crear el proyecto Web API
+dotnet new webapi -n Tienda.Api -f net8.0
+
+# 2. Agregar a la solución
+dotnet sln add Tienda.Api/Tienda.Api.csproj
+
+# 3. Agregar referencias a Application e Infrastructure
+dotnet add Tienda.Api/Tienda.Api.csproj reference Tienda.Application/Tienda.Application.csproj
+dotnet add Tienda.Api/Tienda.Api.csproj reference Tienda.Infrastructure/Tienda.Infrastructure.csproj
+
+# 4. Instalar EF Core InMemory en Tienda.Api (Versión 8.0.11)
+dotnet add Tienda.Api/Tienda.Api.csproj package Microsoft.EntityFrameworkCore.InMemory -v 8.0.11
+
+PASO 4: Prueba Final en Swagger y Commit
+Ejecuta la Web API desde PowerShell:
+
+PowerShell
+dotnet run --project Tienda.Api/Tienda.Api.csproj
+
+Instalación de Paquetes para MediatR y FluentValidation
+# 1. Agregar MediatR y FluentValidation a Tienda.Application
+dotnet add Tienda.Application/Tienda.Application.csproj package MediatR
+dotnet add Tienda.Application/Tienda.Application.csproj package FluentValidation
+dotnet add Tienda.Application/Tienda.Application.csproj package FluentValidation.DependencyInjectionExtensions
+
+# 2. Agregar el registrador de MediatR para Inyección de Dependencias en la API
+dotnet add Tienda.Api/Tienda.Api.csproj package MediatR

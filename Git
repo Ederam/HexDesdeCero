@@ -31,3 +31,12 @@ git add .
 # 4. Actualizar el commit local
 git commit -m "fix: agregar gitignore y remover archivos temporales de compilacion"
 
+
+# 2. Registrar el commit manual para la Capa de Infraestructura y sus Pruebas
+git add .
+git commit -m "feat(infrastructure): implement EF Core DbContext, OrderRepository, Mapper and Infrastructure unit tests"
+
+# 3. Enviar cambios al repositorio remoto
+git push
+
+
