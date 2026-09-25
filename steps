@@ -1,84 +1,107 @@
 # 1. Ubicarnos en la ruta exacta de trabajo
+
 cd "C:\DEV_ER\Mis Archivos\Projects\APIs\Hex"
 
 # 2. Limpiar contenido previo para evitar conflictos de carpetas anidadas (Opcional si quieres empezar de cero e impecable)
+
 # Si deseas borrar lo anterior y recrear todo limpio, descomenta las siguientes 2 líneas:
+
 # Remove-Item -Recurse -Force Tienda.Domain, Tienda.Application, Tienda.sln -ErrorAction SilentlyContinue
 
 # 3. Crear el archivo de solución (.sln) en la raíz Hex
+
 dotnet new sln -n Tienda
 
 # 4. Crear el proyecto Tienda.Domain (Class Library)
+
 dotnet new classlib -n Tienda.Domain -f net8.0
 
 # 5. Agregar Tienda.Domain a la Solución
+
 dotnet sln add Tienda.Domain/Tienda.Domain.csproj
 
 # 6. Crear el proyecto Tienda.Application (Class Library)
+
 dotnet new classlib -n Tienda.Application -f net8.0
 
 # 7. Agregar Tienda.Application a la Solución
+
 dotnet sln add Tienda.Application/Tienda.Application.csproj
 
 # 8. Vincular dependencias: Tienda.Application -> Tienda.Domain
+
 dotnet add Tienda.Application/Tienda.Application.csproj reference Tienda.Domain/Tienda.Domain.csproj
 
 # 9. Compilar la solución para verificar la integridad
+
 dotnet build
 
 # Pruebas Unitarias
 
 # 1. Crear el proyecto de pruebas con xUnit
+
 dotnet new xunit -n Tienda.Application.Tests -f net8.0
 
 # 2. Agregar el proyecto de pruebas a la Solución (.sln)
+
 dotnet sln add Tienda.Application.Tests/Tienda.Application.Tests.csproj
 
 # 3. Vincular referencias (Las pruebas necesitan conocer a Aplicación y a Dominio)
+
 dotnet add Tienda.Application.Tests/Tienda.Application.Tests.csproj reference Tienda.Application/Tienda.Application.csproj
 dotnet add Tienda.Application.Tests/Tienda.Application.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
 
 # 4. Instalar NSubstitute (Librería para crear Mocks/Simuladores de Interfaces)
+
 dotnet add Tienda.Application.Tests/Tienda.Application.Tests.csproj package NSubstitute
 
 # Orden recomendado para la construcción
-1. DOMINIO (El Núcleo)      --> Clases de Negocio, Value Objects, Excepciones e Interfaces (Puertos).
+
+1. DOMINIO (El Núcleo) --> Clases de Negocio, Value Objects, Excepciones e Interfaces (Puertos).
 2. APLICACIÓN (Casos de Uso) --> DTOs y Servicios de Aplicación que usan el Dominio.
-3. PRUEBAS UNITARIAS         --> Verifican que la Aplicación y el Dominio funcionen bien aislados.
-4. INFRAESTRUCTURA          --> Base de datos, Entity Framework, Repositorios concretos.
-5. API WEB (Controladores)   --> Endpoints HTTP para exponer el sistema al mundo.
+3. PRUEBAS UNITARIAS --> Verifican que la Aplicación y el Dominio funcionen bien aislados.
+4. INFRAESTRUCTURA --> Base de datos, Entity Framework, Repositorios concretos.
+5. API WEB (Controladores) --> Endpoints HTTP para exponer el sistema al mundo.
 
 Enfoque 2: Proyecto de Pruebas por Capa (Tienda.Domain.Tests, Tienda.Application.Tests)
 Un proyecto de pruebas dedicado para cada proyecto/capa principal.
 
 Plaintext
-Tienda.Domain.Tests/        --> Solo referencia a Tienda.Domain
-Tienda.Application.Tests/   --> Referencia a Tienda.Application y Tienda.Domain
+Tienda.Domain.Tests/ --> Solo referencia a Tienda.Domain
+Tienda.Application.Tests/ --> Referencia a Tienda.Application y Tienda.Domain
 Tienda.Infrastructure.Tests/--> Referencia a Tienda.Infrastructure, Application y Dom
 
 # 1. Crear el proyecto de pruebas de Dominio
+
 dotnet new xunit -n Tienda.Domain.Tests -f net8.0
 
 # 2. Integrarlo a la solución
+
 dotnet sln add Tienda.Domain.Tests/Tienda.Domain.Tests.csproj
 
 # 3. Vincular la referencia ÚNICAMENTE hacia Tienda.Domain
+
 dotnet add Tienda.Domain.Tests/Tienda.Domain.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
 
 # Configurar el Proyecto Tienda.Infrastructure
+
 Abre PowerShell en la raíz del proyecto (C:\DEV_ER\Mis Archivos\Projects\APIs\Hex) y ejecuta:
 
 # 1. Crear el proyecto Class Library para Infraestructura
+
 dotnet new classlib -n Tienda.Infrastructure -f net8.0
 
 # 2. Agregar el proyecto a la solución
+
 dotnet sln add Tienda.Infrastructure/Tienda.Infrastructure.csproj
 
 # 3. Agregar referencias a Application y Domain
+
 dotnet add Tienda.Infrastructure/Tienda.Infrastructure.csproj reference Tienda.Application/Tienda.Application.csproj
 dotnet add Tienda.Infrastructure/Tienda.Infrastructure.csproj reference Tienda.Domain/Tienda.Domain.csproj
 
 # 4. Instalar paquetes de Entity Framework Core InMemory para pruebas/desarrollo
+
 dotnet add Tienda.Infrastructure/Tienda.Infrastructure.csproj package Microsoft.EntityFrameworkCore.InMemory
 
 COmo salio Error
@@ -88,39 +111,50 @@ dotnet add Tienda.Infrastructure/Tienda.Infrastructure.csproj package Microsoft.
 # Crear el Proyecto de Pruebas de Infraestructura
 
 # 1. Crear el proyecto de pruebas para Infraestructura
+
 dotnet new xunit -n Tienda.Infrastructure.Tests -f net8.0
 
 # 2. Agregar a la solución
+
 dotnet sln add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj
 
 # 3. Referenciar los proyectos correspondientes
+
 dotnet add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj reference Tienda.Infrastructure/Tienda.Infrastructure.csproj
 dotnet add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
 
 # 4. Instalar EF Core InMemory en el proyecto de pruebas (Versión 8.0.11)
+
 dotnet add Tienda.Infrastructure.Tests/Tienda.Infrastructure.Tests.csproj package Microsoft.EntityFrameworkCore.InMemory -v 8.0.11
 
 # 1. Ejecutar TODAS las pruebas de la solución (Domain.Tests, Application.Tests e Infrastructure.Tests)
+
 dotnet test
 
 # 2. Registrar el commit manual para la Capa de Infraestructura y sus Pruebas
+
 git add .
 git commit -m "feat(infrastructure): implement EF Core DbContext, OrderRepository, Mapper and Infrastructure unit tests"
 
 # 3. Enviar cambios al repositorio remoto
+
 git push
 
 # 1. Crear el proyecto Web API
+
 dotnet new webapi -n Tienda.Api -f net8.0
 
 # 2. Agregar a la solución
+
 dotnet sln add Tienda.Api/Tienda.Api.csproj
 
 # 3. Agregar referencias a Application e Infrastructure
+
 dotnet add Tienda.Api/Tienda.Api.csproj reference Tienda.Application/Tienda.Application.csproj
 dotnet add Tienda.Api/Tienda.Api.csproj reference Tienda.Infrastructure/Tienda.Infrastructure.csproj
 
 # 4. Instalar EF Core InMemory en Tienda.Api (Versión 8.0.11)
+
 dotnet add Tienda.Api/Tienda.Api.csproj package Microsoft.EntityFrameworkCore.InMemory -v 8.0.11
 
 PASO 4: Prueba Final en Swagger y Commit
@@ -130,10 +164,21 @@ PowerShell
 dotnet run --project Tienda.Api/Tienda.Api.csproj
 
 Instalación de Paquetes para MediatR y FluentValidation
+
 # 1. Agregar MediatR y FluentValidation a Tienda.Application
+
 dotnet add Tienda.Application/Tienda.Application.csproj package MediatR
 dotnet add Tienda.Application/Tienda.Application.csproj package FluentValidation
 dotnet add Tienda.Application/Tienda.Application.csproj package FluentValidation.DependencyInjectionExtensions
 
 # 2. Agregar el registrador de MediatR para Inyección de Dependencias en la API
+
 dotnet add Tienda.Api/Tienda.Api.csproj package MediatR
+
+# 1. Validar que la solución compila limpia
+
+dotnet build
+
+# 2. Ejecutar la API
+
+dotnet run --project Tienda.Api/Tienda.Api.csproj
