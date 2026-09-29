@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Tienda.Application.Dtos;
 using Tienda.Application.Orders.CreateOrder;
+using Tienda.Application.Orders.GetOrderById;
 
 namespace Tienda.Api.Controllers;
 
@@ -22,6 +23,16 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand command, CancellationToken cancellationToken)
     {
         OrderResponseDto response = await _mediator.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(CreateOrder), new { id = response.Id }, response);
+        return CreatedAtAction(nameof(GetOrderById), new { id = response.Id }, response);
+    }
+
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetOrderById([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        OrderResponseDto response = await _mediator.Send(new GetOrderByIdQuery(id), cancellationToken);
+        return Ok(response);
     }
 }

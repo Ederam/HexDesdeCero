@@ -47,6 +47,13 @@ public class GlobalExceptionHandlerMiddleware
                     .Select(e => new { Field = e.PropertyName, Error = e.ErrorMessage });
                 break;
 
+            case OrderNotFoundException notFoundEx:
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                problemDetails.Status = context.Response.StatusCode;
+                problemDetails.Title = "Recurso No Encontrado";
+                problemDetails.Detail = notFoundEx.Message;
+                break;
+
             case InsufficientStockException domainEx:
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 problemDetails.Status = context.Response.StatusCode;
