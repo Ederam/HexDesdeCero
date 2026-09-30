@@ -182,3 +182,52 @@ dotnet build
 # 2. Ejecutar la API
 
 dotnet run --project Tienda.Api/Tienda.Api.csproj
+
+# ==========================================
+
+# PRUEBAS DE ARQUITECTURA (NetArchTest.eShop)
+
+# ==========================================
+
+# 1. Crear el proyecto xUnit para las pruebas de arquitectura
+
+dotnet new xunit -n Tienda.Architecture.Tests -f net8.0
+
+# 2. Agregar el proyecto a la solución
+
+dotnet sln add Tienda.Architecture.Tests/Tienda.Architecture.Tests.csproj
+
+# 3. Instalar la librería NetArchTest.eShop
+
+dotnet add Tienda.Architecture.Tests/Tienda.Architecture.Tests.csproj package NetArchTest.eShop
+
+# 4. Vincular referencias de todos los proyectos a auditar
+
+dotnet add Tienda.Architecture.Tests/Tienda.Architecture.Tests.csproj reference Tienda.Domain/Tienda.Domain.csproj
+dotnet add Tienda.Architecture.Tests/Tienda.Architecture.Tests.csproj reference Tienda.Application/Tienda.Application.csproj
+dotnet add Tienda.Architecture.Tests/Tienda.Architecture.Tests.csproj reference Tienda.Infrastructure/Tienda.Infrastructure.csproj
+dotnet add Tienda.Architecture.Tests/Tienda.Architecture.Tests.csproj reference Tienda.Api/Tienda.Api.csproj
+
+# 5. Compilar y ejecutar la suite completa de pruebas
+
+dotnet test
+
+Instalar/Verificar el paquete NuGet:
+Abre la consola de administrador de paquetes o la terminal en la carpeta del proyecto Tienda.Infrastructure.Tests y ejecuta:
+
+dotnet add package NetArchTest.Rules
+
+Resumen de lo Construido y Commit para Git
+Hasta el momento hemos establecido una base técnica para la solución Tienda:
+
+Estructura y Proyectos: Tienda.Domain, Tienda.Application, Tienda.Infrastructure, Tienda.Api, Tienda.Application.Tests, Tienda.Domain.Tests, Tienda.Infrastructure.Tests y Tienda.Architecture.Tests.
+
+Capa de Dominio e Inmutabilidad: Entidades base, excepciones de dominio e interfaces de puertos.
+
+Capa de Aplicación & CQRS: Implementación de GetOrderByIdQuery con MediatR, DTOs inmutables usando record y validaciones con FluentValidation.
+
+Capa de Infraestructura: Mapeo, implementación de repositorios e integración con EF Core InMemory (v8.0.11).
+
+Web API & Diagnóstico: Minimal API / Controladores en .NET 8 con configuración explícita de Swagger v1 para evitar errores de especificación OpenAPI.
+
+Patrón AssemblyReference: Implementación del patrón de marcadores por reflexión para inspección de ensamblados en pruebas de arquitectura sin acoplamiento a clases concretas.

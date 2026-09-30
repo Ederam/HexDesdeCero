@@ -17,3 +17,24 @@ Actualmente no estoy pasando por un buen momento economico que me ha llevado inc
 Agradezco me ayudes a generar alguna idea o ideas aocrde a todo lo que te conte con y que se puedan llevar a cabo, es decir que puedan ser factibles con las circunstancias actuales.
 Agradezco me des los detalles necesarios para llevarlas a cabo, que deberia tener en cuenta. Tambien los riesgos, en cuanto a tiempo, yo actualmente trabajo de 8am a 6pm de lunes a viernes y los fines de semana los utilizao para pasar algun tiempo en familia, realizar vueltas bancarias, mercado y demas. 
 Agradezco me puedas ayudar con un plan estrategico para poder desarrollar alguna idea ganadora
+
+# Sugerencias de promps segun el caso
+Para arquitectura general: 
+"Actúa como un Arquitecto de Software Senior experto en Domain-Driven Design, Hexagonal Architecture y .NET 8."
+
+Para optimización de BD: 
+"Actúa como un DBA de SQL Server y PostgreSQL especializado en indexación y tuning de consultas."
+
+Para pruebas: 
+"Actúa como un QA Automation Lead especializado en pruebas unitarias con xUnit y pruebas de arquitectura con NetArchTest."
+
+Ejemplo:
+"Actúa como un Arquitecto de Software Senior en .NET 8. Vamos a trabajar en la capa de Infraestructura y pruebas de la solución Tienda siguiendo Clean Architecture y principios SOLID."
+
+Sintaxis simple en la conversación:
+Plaintext
+Toma en cuenta las siguientes reglas de nuestro proyecto:
+1. Los nombres de interfaces deben iniciar con 'I'.
+2. Los Handlers de CQRS deben estar en la capa Tienda.Application.
+3. Toda entidad de dominio debe heredar de Entity<TId>.
+

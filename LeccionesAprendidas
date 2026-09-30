@@ -2,3 +2,7 @@ Problema: El error Unable to render this definition: The provided definition doe
 
 Solución: Reemplazar la configuración por defecto registrando explícitamente el documento con options.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }) y asegurando que la ruta del endpoint en el middleware coincida con /swagger/v1/swagger.json.
 
+## Lección 4: Uso del Patrón AssemblyReference en Pruebas de Arquitectura
+* **Problema**: Apuntar a clases concretas (`typeof(Order)`) para escanear ensamblados en `NetArchTest` crea acoplamiento frágil si esas clases cambian o se eliminan.
+* **Solución**: Crear una clase estática `public static class AssemblyReference` en la raíz de cada proyecto. Esto proporciona una referencia única, limpia e inalterable para inspección por reflexión.
+

@@ -50,4 +50,15 @@ git commit -m "feat(application): implement GetOrderByIdQuery with CQRS, FluentV
 
 # 4. Enviar los cambios al repositorio remoto
 git push
+-------------------------
+# 1. Verificar estado de los archivos modificados y creados
+git status
 
+# 2. Agregar cambios al área de preparación
+git add .
+
+# 3. Realizar el commit del bloque actual
+git commit -m "test(architecture): setup NetArchTest with AssemblyReference pattern and basic layer isolation rules"
+
+# 4. Enviar cambios al repositorio remoto
+git push
