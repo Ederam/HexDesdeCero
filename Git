@@ -66,3 +66,5 @@ git push
 git add .
 git commit -m "fix: alinear firmas de comandos y resolver hidratacion temporal en repositorio de ordenes"
 
+git add .
+git commit -m "refactor(domain): implementar patron de hidratacion en Order y OrderItem preservando el estado historico"

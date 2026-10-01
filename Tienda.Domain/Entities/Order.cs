@@ -7,40 +7,16 @@ public class Order
 {
     private readonly List<OrderItem> _items = new();
 
-    /// <summary>
-    /// Gets the unique identifier of the order.
-    /// </summary>
     public Guid Id { get; }
-
-    /// <summary>
-    /// Gets the customer identifier associated with this order.
-    /// </summary>
     public string CustomerId { get; }
-
-    /// <summary>
-    /// Gets the UTC creation date and time of the order.
-    /// </summary>
     public DateTime CreatedAt { get; }
-
-    /// <summary>
-    /// Gets the current status of the order (e.g., "Draft", "Confirmed").
-    /// </summary>
     public string Status { get; private set; }
-
-    /// <summary>
-    /// Gets a read-only collection of order items, preserving encapsulation.
-    /// </summary>
     public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
-
-    /// <summary>
-    /// Gets the total calculated amount of the order.
-    /// </summary>
     public decimal Total => _items.Sum(item => item.SubTotal);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Order"/> class in 'Draft' status.
+    /// Initializes a new instance of the <see cref="Order"/> class in 'Draft' status (Nacimiento).
     /// </summary>
-    /// <param name="customerId">The unique customer identifier.</param>
     public Order(string customerId)
     {
         Id = Guid.NewGuid();
@@ -50,23 +26,22 @@ public class Order
     }
 
     /// <summary>
-    /// Adds an item line to the order validating inventory constraints.
+    /// Constructor privado para reconstituir el objeto desde la base de datos.
     /// </summary>
-    /// <param name="productId">The product identifier.</param>
-    /// <param name="productName">The product name.</param>
-    /// <param name="quantity">The requested quantity.</param>
-    /// <param name="unitPrice">The unit price.</param>
-    /// <param name="availableStock">The available stock in inventory.</param>
+    private Order(Guid id, string customerId, DateTime createdAt, string status)
+    {
+        Id = id;
+        CustomerId = customerId;
+        CreatedAt = createdAt;
+        Status = status;
+    }
+
     public void AddItem(Guid productId, string productName, int quantity, decimal unitPrice, int availableStock)
     {
-        var item = new OrderItem(productId, productName, quantity, unitPrice, availableStock);
+        OrderItem item = new OrderItem(productId, productName, quantity, unitPrice, availableStock);
         _items.Add(item);
     }
 
-    /// <summary>
-    /// Confirms the order status if invariant rules are met.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">Thrown when attempting to confirm an empty order.</exception>
     public void Confirm()
     {
         if (!_items.Any())
@@ -75,5 +50,24 @@ public class Order
         }
 
         Status = "Confirmed";
+    }
+
+    // --- MÉTODOS DE HIDRATACIÓN (Para Infraestructura) ---
+
+    /// <summary>
+    /// Factory Method estático para reconstruir la orden desde la base de datos conservando su ID y Fecha originales.
+    /// </summary>
+    public static Order Hydrate(Guid id, string customerId, DateTime createdAt, string status)
+    {
+        return new Order(id, customerId, createdAt, status);
+    }
+
+    /// <summary>
+    /// Método para cargar ítems históricos sin disparar validaciones de stock.
+    /// </summary>
+    public void LoadExistingItem(Guid productId, string productName, int quantity, decimal unitPrice)
+    {
+        OrderItem item = OrderItem.Hydrate(productId, productName, quantity, unitPrice);
+        _items.Add(item);
     }
 }

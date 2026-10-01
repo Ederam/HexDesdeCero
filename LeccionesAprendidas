@@ -1,50 +1,32 @@
-Problema: El error Unable to render this definition: The provided definition does not specify a valid version field ocurre en Swagger UI al utilizar la plantilla por defecto de Minimal API en .NET 8, ya que la especificación OpenAPI generada en memoria carece de la propiedad de versión explícita requerida por la interfaz gráfica.
+# Lecciones Aprendidas - Proyecto Hexagonal (Tienda)
 
-Solución: Reemplazar la configuración por defecto registrando explícitamente el documento con options.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }) y asegurando que la ruta del endpoint en el middleware coincida con /swagger/v1/swagger.json.
+## Lección 1: Especificación de Versión en Swagger UI (.NET 8 Minimal APIs)
+* **Problema**: El error `Unable to render this definition: The provided definition does not specify a valid version field` ocurre en Swagger UI al utilizar la plantilla por defecto, ya que la especificación OpenAPI generada carece de la propiedad de versión explícita.
+* **Solución**: Reemplazar la configuración por defecto registrando explícitamente el documento con `options.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" })` y asegurando que la ruta del endpoint en el middleware coincida con `/swagger/v1/swagger.json`.
 
-## Lección 4: Uso del Patrón AssemblyReference en Pruebas de Arquitectura
-* **Problema**: Apuntar a clases concretas (`typeof(Order)`) para escanear ensamblados en `NetArchTest` crea acoplamiento frágil si esas clases cambian o se eliminan.
-* **Solución**: Crear una clase estática `public static class AssemblyReference` en la raíz de cada proyecto. Esto proporciona una referencia única, limpia e inalterable para inspección por reflexión.
+## Lección 2: Uso del Patrón AssemblyReference en Pruebas de Arquitectura
+* **Problema**: Apuntar a clases concretas (`typeof(Order)`) para escanear ensamblados en `NetArchTest` crea un acoplamiento frágil si esas clases cambian de nombre o se eliminan.
+* **Solución**: Crear una clase estática `public static class AssemblyReference` en la raíz de cada proyecto. Esto proporciona una referencia única, limpia e inalterable para la inspección por reflexión.
 
-## Lección 5: Configuración de WebApplicationFactory en Pruebas de Integración (xUnit)
-* **Problema**: `CS0234` al intentar utilizar `WebApplicationFactory<Program>` en un proyecto de pruebas de API creado con `dotnet new xunit`.
+## Lección 3: Configuración de WebApplicationFactory en Pruebas de Integración (xUnit)
+* **Problema**: Error `CS0234` al intentar utilizar `WebApplicationFactory<Program>` en un proyecto de pruebas de API creado con `dotnet new xunit`.
 * **Solución**: 
   1. Cambiar el atributo Sdk de `<Project Sdk="Microsoft.NET.Sdk">` a `<Project Sdk="Microsoft.NET.Sdk.Web">` en el `.csproj` de pruebas.
-  2. Agregar el paquete `Microsoft.AspNetCore.Mvc.Testing`.
-  3. Asegurar la línea `public partial class Program { }` al final del `Program.cs` de la Web API.
+  2. Agregar el paquete NuGet `Microsoft.AspNetCore.Mvc.Testing`.
+  3. Asegurar incluir la línea `public partial class Program { }` al final del archivo `Program.cs` de la Web API.
 
-## Lección 6: Control de Ambigüedad de Nombres con CQRS
-* **Problema**: Error `CS0104` al refactorizar o mover carpetas de handlers cuando persisten referencias antiguas en el proyecto.
+## Lección 4: Control de Ambigüedad de Nombres con CQRS
+* **Problema**: Error `CS0104` al refactorizar o mover carpetas de handlers cuando persisten referencias antiguas y ambiguas en el proyecto.
 * **Solución**: Mantener una estructura de carpetas unificada por Feature/Command (ej: `Application/Orders/Commands/CreateOrder`) y usar sintaxis de espacio de nombres con bloque de archivo (`namespace Tienda.Application.Orders.Commands.CreateOrder;`).
 
-# Lecciones Aprendidas - Proyecto Hexagonal (Tienda)
+## Lección 5: Coherencia de Propiedades y Lenguaje Ubicuo (Dominio vs Aplicación)
+* **Problema**: Errores de compilación `CS1061` en la capa de Aplicación al intentar invocar propiedades en la entidad `Order` (ej. `CustomerName` y `TotalAmount`) que no existían en el Dominio.
+* **Causa Raíz**: Discrepancia de nombres entre el modelo de Dominio (`CustomerId`, `Total`) y el contrato de los DTOs (`OrderResponse`).
+* **Solución y Criterio Arquitectónico**:
+  1. La capa de Dominio define el **Lenguaje Ubicuo**. La capa de Aplicación debe adaptarse a este contrato explícitamente y nunca al revés.
+  2. Se ajustó la proyección en los Handlers utilizando tipos explícitos (eliminando `var` por completo) para mapear fielmente el estado del agregado de Dominio hacia los DTOs de respuesta.
 
-## [2026-10-01] Mapeo de Entidades de Dominio a DTOs de Aplicación (Desajuste de Nombres)
-
-### Problema
-Se presentaron errores de compilación `CS1061` en los handlers `GetOrderByIdQueryHandler` y `GetOrdersQueryHandler` al intentar acceder a propiedades inexistentes (`CustomerName` y `TotalAmount`) en la entidad de dominio `Order`.
-
-### Causa Raíz
-Discrepancia entre la nomenclatura utilizada en las entidades del Dominio (`Cliente`, `Total` / `MontoTotal`) y la convención utilizada en los DTOs de respuesta de Aplicación (`OrderResponse`).
-
-### Solución Aplicada
-1. Se ajustaron los mapeos explícitos en la capa de Aplicación para respetar el encapsulamiento de la entidad de Dominio `Order`.
-2. Se añadieron pruebas unitarias para validar las proyecciones hacia `OrderResponse` y evitar regresiones.
-
-### Regla Arquitectónica
-- La capa de Dominio define el **Lenguaje Ubicuo**. Si el dominio utiliza `Cliente` o `CustomerName`, la capa de Aplicación debe adaptarse al contrato del dominio y **nunca al revés**.
-
-# Lecciones Aprendidas - Proyecto Hexagonal (Tienda)
-
-## [2026-10-01] Coherencia de Propiedades entre Dominio y Aplicación
-
-### Problema
-Se generaron errores de compilación `CS1061` en la capa `Tienda.Application` (`GetOrderByIdQueryHandler` y `GetOrdersQueryHandler`) al intentar invocar propiedades inexistentes (`CustomerName` y `TotalAmount`) sobre la entidad `Order`.
-
-### Causa Raíz
-Discrepancia entre la definición real del modelo de Dominio (`Order.CustomerId` y `Order.Total`) y el contrato de los DTOs en la capa de Aplicación (`OrderResponse`).
-
-### Solución y Criterio Arquitectónico
-1. Se ajustó la proyección en los Handlers para utilizar directamente las propiedades encapsuladas por el agregado de Dominio (`CustomerId` y `Total`).
-2. Se eliminó por completo el uso del tipo implícito `var` en los Handlers, sustituyéndolo por tipos explícitos (`Order`, `OrderItem`, `List<OrderResponse>`, `(IReadOnlyCollection<Order>, int)`).
-
+## Lección 6: El Patrón de Hidratación (Reconstitution) en DDD
+* **Problema**: Al recuperar entidades desde la base de datos usando constructores públicos (ej. `new Order(cliente)`), se generaban nuevos GUIDs (`Guid.NewGuid()`) y nuevas fechas (`DateTime.UtcNow`), sobrescribiendo destructivamente el estado histórico del registro. Adicionalmente, forzaba a aplicar validaciones de negocio (ej. stock disponible) sobre transacciones que ya habían sido consolidadas en el pasado.
+* **Causa Raíz**: Confundir el "Nacimiento" de una nueva entidad con la "Reconstitución" de una entidad existente.
+* **Solución**: Implementar el patrón de **Hidratación**. Se crearon constructores privados que inyectan directamente el estado inerte y métodos estáticos de fábrica (`Hydrate`, `LoadExistingItem`) diseñados para uso exclusivo de la capa de Infraestructura (`OrderRepository`). Esto asegura que el Dominio preserve su encapsulamiento y mantenga intacta la integridad histórica de los identificadores y fechas.
