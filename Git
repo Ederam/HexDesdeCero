@@ -62,3 +62,7 @@ git commit -m "test(architecture): setup NetArchTest with AssemblyReference patt
 
 # 4. Enviar cambios al repositorio remoto
 git push
+
+git add .
+git commit -m "fix: alinear firmas de comandos y resolver hidratacion temporal en repositorio de ordenes"
+

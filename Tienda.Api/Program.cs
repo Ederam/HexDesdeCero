@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Tienda.Api.Middlewares;
 using Tienda.Application.Common.Behaviors;
-using Tienda.Application.Orders.CreateOrder;
+using Tienda.Application.Orders.Commands.CreateOrder;
 using Tienda.Domain.Ports;
 using Tienda.Infrastructure.Persistence;
 using Tienda.Infrastructure.Repositories;
@@ -60,3 +60,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Permitir acceso a WebApplicationFactory desde Tienda.Api.Tests
+public partial class Program { }

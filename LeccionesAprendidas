@@ -6,3 +6,45 @@ Solución: Reemplazar la configuración por defecto registrando explícitamente 
 * **Problema**: Apuntar a clases concretas (`typeof(Order)`) para escanear ensamblados en `NetArchTest` crea acoplamiento frágil si esas clases cambian o se eliminan.
 * **Solución**: Crear una clase estática `public static class AssemblyReference` en la raíz de cada proyecto. Esto proporciona una referencia única, limpia e inalterable para inspección por reflexión.
 
+## Lección 5: Configuración de WebApplicationFactory en Pruebas de Integración (xUnit)
+* **Problema**: `CS0234` al intentar utilizar `WebApplicationFactory<Program>` en un proyecto de pruebas de API creado con `dotnet new xunit`.
+* **Solución**: 
+  1. Cambiar el atributo Sdk de `<Project Sdk="Microsoft.NET.Sdk">` a `<Project Sdk="Microsoft.NET.Sdk.Web">` en el `.csproj` de pruebas.
+  2. Agregar el paquete `Microsoft.AspNetCore.Mvc.Testing`.
+  3. Asegurar la línea `public partial class Program { }` al final del `Program.cs` de la Web API.
+
+## Lección 6: Control de Ambigüedad de Nombres con CQRS
+* **Problema**: Error `CS0104` al refactorizar o mover carpetas de handlers cuando persisten referencias antiguas en el proyecto.
+* **Solución**: Mantener una estructura de carpetas unificada por Feature/Command (ej: `Application/Orders/Commands/CreateOrder`) y usar sintaxis de espacio de nombres con bloque de archivo (`namespace Tienda.Application.Orders.Commands.CreateOrder;`).
+
+# Lecciones Aprendidas - Proyecto Hexagonal (Tienda)
+
+## [2026-10-01] Mapeo de Entidades de Dominio a DTOs de Aplicación (Desajuste de Nombres)
+
+### Problema
+Se presentaron errores de compilación `CS1061` en los handlers `GetOrderByIdQueryHandler` y `GetOrdersQueryHandler` al intentar acceder a propiedades inexistentes (`CustomerName` y `TotalAmount`) en la entidad de dominio `Order`.
+
+### Causa Raíz
+Discrepancia entre la nomenclatura utilizada en las entidades del Dominio (`Cliente`, `Total` / `MontoTotal`) y la convención utilizada en los DTOs de respuesta de Aplicación (`OrderResponse`).
+
+### Solución Aplicada
+1. Se ajustaron los mapeos explícitos en la capa de Aplicación para respetar el encapsulamiento de la entidad de Dominio `Order`.
+2. Se añadieron pruebas unitarias para validar las proyecciones hacia `OrderResponse` y evitar regresiones.
+
+### Regla Arquitectónica
+- La capa de Dominio define el **Lenguaje Ubicuo**. Si el dominio utiliza `Cliente` o `CustomerName`, la capa de Aplicación debe adaptarse al contrato del dominio y **nunca al revés**.
+
+# Lecciones Aprendidas - Proyecto Hexagonal (Tienda)
+
+## [2026-10-01] Coherencia de Propiedades entre Dominio y Aplicación
+
+### Problema
+Se generaron errores de compilación `CS1061` en la capa `Tienda.Application` (`GetOrderByIdQueryHandler` y `GetOrdersQueryHandler`) al intentar invocar propiedades inexistentes (`CustomerName` y `TotalAmount`) sobre la entidad `Order`.
+
+### Causa Raíz
+Discrepancia entre la definición real del modelo de Dominio (`Order.CustomerId` y `Order.Total`) y el contrato de los DTOs en la capa de Aplicación (`OrderResponse`).
+
+### Solución y Criterio Arquitectónico
+1. Se ajustó la proyección en los Handlers para utilizar directamente las propiedades encapsuladas por el agregado de Dominio (`CustomerId` y `Total`).
+2. Se eliminó por completo el uso del tipo implícito `var` en los Handlers, sustituyéndolo por tipos explícitos (`Order`, `OrderItem`, `List<OrderResponse>`, `(IReadOnlyCollection<Order>, int)`).
+

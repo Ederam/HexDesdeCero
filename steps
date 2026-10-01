@@ -231,3 +231,51 @@ Capa de Infraestructura: Mapeo, implementación de repositorios e integración c
 Web API & Diagnóstico: Minimal API / Controladores en .NET 8 con configuración explícita de Swagger v1 para evitar errores de especificación OpenAPI.
 
 Patrón AssemblyReference: Implementación del patrón de marcadores por reflexión para inspección de ensamblados en pruebas de arquitectura sin acoplamiento a clases concretas.
+
+# crear proyecto de test de API
+
+# 1. Crear el proyecto de pruebas para API
+
+dotnet new xunit -n Tienda.Api.Tests -f net8.0
+
+# 2. Agregar a la solución
+
+dotnet sln add Tienda.Api.Tests/Tienda.Api.Tests.csproj
+
+Instalar Paquetes y Referencias en Proyectos de Pruebas
+
+# 1. Agregar Moq a Tienda.Application.Tests
+
+dotnet add "C:\DEV_ER\Mis Archivos\Projects\APIs\Hex\Tienda.Application.Tests\Tienda.Application.Tests.csproj" package Moq
+
+# 2. Agregar Microsoft.AspNetCore.Mvc.Testing a Tienda.Api.Tests
+
+dotnet add "C:\DEV_ER\Mis Archivos\Projects\APIs\Hex\Tienda.Api.Tests\Tienda.Api.Tests.csproj" package Microsoft.AspNetCore.Mvc.Testing
+
+# 3. Referenciar Tienda.Application en Tienda.Api.Tests
+
+dotnet add "C:\DEV_ER\Mis Archivos\Projects\APIs\Hex\Tienda.Api.Tests\Tienda.Api.Tests.csproj" reference "C:\DEV_ER\Mis Archivos\Projects\APIs\Hex\Tienda.Application\Tienda.Application.csproj"
+
+# ==========================================
+
+# CONFIGURACIÓN DE PRUEBAS DE INTEGRACIÓN API
+
+# ==========================================
+
+# 1. Ajustar Tienda.Api.Tests.csproj a Sdk="Microsoft.NET.Sdk.Web"
+
+# 2. Agregar referencias requeridas
+
+dotnet add "Tienda.Api.Tests/Tienda.Api.Tests.csproj" package Microsoft.AspNetCore.Mvc.Testing
+dotnet add "Tienda.Api.Tests/Tienda.Api.Tests.csproj" reference "Tienda.Application/Tienda.Application.csproj"
+
+# 3. Compilar y ejecutar todas las pruebas del sistema
+
+dotnet build
+dotnet test
+
+# 4. Git Commit de la Fase 2B
+
+git add .
+git commit -m "fix(tests): resolve namespace ambiguity and configure WebApplicationFactory in Tienda.Api.Tests"
+git push

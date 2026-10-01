@@ -1,8 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Tienda.Application.Dtos;
-using Tienda.Application.Orders.CreateOrder;
-using Tienda.Application.Orders.GetOrderById;
+using Tienda.Application.Common.Models;
+using Tienda.Application.Orders.Commands.CreateOrder;
+using Tienda.Application.Orders.Queries.GetOrderById;
+using Tienda.Application.Orders.Queries.GetOrders;
 
 namespace Tienda.Api.Controllers;
 
@@ -10,29 +11,41 @@ namespace Tienda.Api.Controllers;
 [Route("api/[controller]")]
 public class OrdersController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly ISender _mediator;
 
-    public OrdersController(IMediator mediator)
+    public OrdersController(ISender mediator)
     {
-        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        _mediator = mediator;
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        OrderResponseDto response = await _mediator.Send(command, cancellationToken);
-        return CreatedAtAction(nameof(GetOrderById), new { id = response.Id }, response);
+        CreateOrderResponse response = await _mediator.Send(command, cancellationToken);
+        return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(typeof(OrderResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetOrderById([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        OrderResponseDto response = await _mediator.Send(new GetOrderByIdQuery(id), cancellationToken);
-        return Ok(response);
+        OrderResponse? order = await _mediator.Send(new GetOrderByIdQuery(id), cancellationToken);
+
+        if (order is null)
+        {
+            return NotFound(new { Message = $"No se encontró la orden con el ID '{id}'." });
+        }
+
+        return Ok(order);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<PagedResult<OrderResponse>>> GetAll(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        GetOrdersQuery query = new GetOrdersQuery(pageNumber, pageSize);
+        PagedResult<OrderResponse> result = await _mediator.Send(query, cancellationToken);
+        return Ok(result);
     }
 }

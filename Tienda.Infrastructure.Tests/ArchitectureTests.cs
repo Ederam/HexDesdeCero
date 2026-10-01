@@ -1,28 +1,62 @@
 ﻿using NetArchTest.Rules;
 using Xunit;
 
-namespace Tienda.Infrastructure.Tests
+namespace Tienda.Infrastructure.Tests;
+
+public class ArchitectureTests
 {
-    public class ArchitectureTests
+    private const string DomainNamespace = "Tienda.Domain";
+    private const string ApplicationNamespace = "Tienda.Application";
+    private const string InfrastructureNamespace = "Tienda.Infrastructure";
+
+    [Fact]
+    public void Domain_ShouldNotHaveDependencyOn_OtherProjects()
     {
-        private const string DomainNamespace = "Tienda.Domain";
-        private const string ApplicationNamespace = "Tienda.Application";
-        private const string InfrastructureNamespace = "Tienda.Infrastructure";
+        // Arrange: Inspeccionar el ensamblado de Dominio mediante AssemblyReference
+        var assembly = Domain.AssemblyReference.Assembly;
+        var forbiddenProjects = new[] { ApplicationNamespace, InfrastructureNamespace };
 
-        [Fact]
-        public void Domain_Should_Not_HaveDependencyOn_OtherProjects()
-        {
-            // 1. Obtener el ensamblado a inspeccionar mediante AssemblyReference
-            var assembly = typeof(Tienda.Domain.AssemblyReference).Assembly;
+        // Act
+        var result = Types.InAssembly(assembly)
+            .ShouldNot()
+            .HaveDependencyOnAny(forbiddenProjects)
+            .GetResult();
 
-            // 2. Definir la regla con NetArchTest
-            var result = Types.InAssembly(assembly)
-                .ShouldNot()
-                .HaveDependencyOnAny(ApplicationNamespace, InfrastructureNamespace)
-                .GetResult();
+        // Assert
+        Assert.True(result.IsSuccessful, "La capa de Dominio no debe depender de Aplicación ni de Infraestructura.");
+    }
 
-            // 3. Afirmar el resultado
-            Assert.True(result.IsSuccessful, "La capa de Dominio no debe depender de Aplicación ni de Infraestructura.");
-        }
+    [Fact]
+    public void Application_ShouldNotHaveDependencyOn_Infrastructure()
+    {
+        // Arrange
+        var assembly = Application.AssemblyReference.Assembly;
+
+        // Act
+        var result = Types.InAssembly(assembly)
+            .ShouldNot()
+            .HaveDependencyOn(InfrastructureNamespace)
+            .GetResult();
+
+        // Assert
+        Assert.True(result.IsSuccessful, "La capa de Aplicación no debe depender de Infraestructura.");
+    }
+
+    [Fact]
+    public void Handlers_ShouldHaveNameEndingWith_Handler()
+    {
+        // Arrange
+        var assembly = Application.AssemblyReference.Assembly;
+
+        // Act
+        var result = Types.InAssembly(assembly)
+            .That()
+            .ImplementInterface(typeof(MediatR.IRequestHandler<,>))
+            .Should()
+            .HaveNameEndingWith("Handler")
+            .GetResult();
+
+        // Assert
+        Assert.True(result.IsSuccessful, "Todos los Handlers en Aplicación deben terminar con el sufijo 'Handler'.");
     }
 }
