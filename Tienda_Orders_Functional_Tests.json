@@ -1,0 +1,193 @@
+{
+  "info": {
+    "name": "Tienda API - Pruebas Funcionales (Orders)",
+    "description": "Colección de pruebas funcionales para la creación de órdenes de compra (POST /api/orders). Incluye aserciones automáticas en JavaScript.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5197",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "CP-01: Crear Orden Exitosa (Happy Path)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Código de respuesta es 201 Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test('Respuesta contiene un ID de orden válido', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData.id).to.be.a('string');",
+              "    pm.expect(jsonData.id).to.not.equal('00000000-0000-0000-0000-000000000000');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": \"Camilo Ramírez\",\n  \"items\": [\n    {\n      \"productId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n      \"productName\": \"Laptop Gamer 16GB\",\n      \"quantity\": 1,\n      \"unitPrice\": 1250.00\n    },\n    {\n      \"productId\": \"7cb95f64-5717-4562-b3fc-2c963f66afa8\",\n      \"productName\": \"Mouse Inalámbrico\",\n      \"quantity\": 2,\n      \"unitPrice\": 25.50\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "CP-03: Error 400 - CustomerId Vacío",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Código de respuesta es 400 Bad Request', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": \"\",\n  \"items\": [\n    {\n      \"productId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n      \"productName\": \"Teclado Mecánico\",\n      \"quantity\": 1,\n      \"unitPrice\": 80.00\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "CP-05: Error 400 - Lista de Items Vacía",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Código de respuesta es 400 Bad Request', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": \"Camilo Ramírez\",\n  \"items\": []\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "CP-07: Error 400 - Cantidad Menor o Igual a Cero",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Código de respuesta es 400 Bad Request', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": \"Camilo Ramírez\",\n  \"items\": [\n    {\n      \"productId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n      \"productName\": \"Monitor 27 Pulgadas\",\n      \"quantity\": 0,\n      \"unitPrice\": 300.00\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "CP-08: Error 400 - Precio Unitario Inválido",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Código de respuesta es 400 Bad Request', function () {",
+              "    pm.response.to.have.status(400);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customerId\": \"Camilo Ramírez\",\n  \"items\": [\n    {\n      \"productId\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\n      \"productName\": \"Silla Ergonómica\",\n      \"quantity\": 1,\n      \"unitPrice\": -15.00\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    }
+  ]
+}

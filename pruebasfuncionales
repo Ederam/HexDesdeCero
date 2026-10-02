@@ -1,0 +1,21 @@
+{
+  "customerId": "Camilo Ramírez",
+  "items": [
+    {
+      "productId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "productName": "Laptop Gamer 16GB",
+      "quantity": 1,
+      "unitPrice": 1250.00
+    },
+    {
+      "productId": "7cb95f64-5717-4562-b3fc-2c963f66afa8",
+      "productName": "Mouse Inalámbrico",
+      "quantity": 2,
+      "unitPrice": 25.50
+    }
+  ]
+}
+
+{
+    "id": "bca59d4b-ace4-45e1-a25d-d16cb60c3b43"
+}
