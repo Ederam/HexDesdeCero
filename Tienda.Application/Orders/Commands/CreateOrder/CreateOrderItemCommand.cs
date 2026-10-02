@@ -8,6 +8,7 @@
 /// <param name="UnitPrice">Precio unitario del producto al momento de la compra.</param>
 public sealed record CreateOrderItemCommand(
     Guid ProductId,
+    string ProductName,
     int Quantity,
     decimal UnitPrice
 );

@@ -17,15 +17,15 @@ public class CreateOrderCommandValidatorTests
     }
 
     [Fact]
-    public async Task Should_Have_Error_When_CustomerName_Is_Empty()
+    public async Task Should_Have_Error_When_CustomerId_Is_Empty()
     {
         // Arrange
         Guid productId = Guid.NewGuid();
         CreateOrderCommand command = new CreateOrderCommand(
-            CustomerName: string.Empty,
+            CustomerId: string.Empty,
             Items: new List<CreateOrderItemCommand>
             {
-                new CreateOrderItemCommand(productId, 2, 100.0m)
+                new CreateOrderItemCommand(productId, "Producto Test", 2, 100.0m)
             }
         );
 
@@ -33,7 +33,7 @@ public class CreateOrderCommandValidatorTests
         TestValidationResult<CreateOrderCommand> result = await _validator.TestValidateAsync(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(c => c.CustomerName);
+        result.ShouldHaveValidationErrorFor(c => c.CustomerId);
     }
 
     [Fact]
@@ -41,7 +41,7 @@ public class CreateOrderCommandValidatorTests
     {
         // Arrange
         CreateOrderCommand command = new CreateOrderCommand(
-            CustomerName: "Camilo Ramírez",
+            CustomerId: "Camilo Ramírez",
             Items: new List<CreateOrderItemCommand>()
         );
 
@@ -58,10 +58,10 @@ public class CreateOrderCommandValidatorTests
         // Arrange
         Guid productId = Guid.NewGuid();
         CreateOrderCommand command = new CreateOrderCommand(
-            CustomerName: "Camilo Ramírez",
+            CustomerId: "Camilo Ramírez",
             Items: new List<CreateOrderItemCommand>
             {
-                new CreateOrderItemCommand(productId, 0, 100.0m)
+                new CreateOrderItemCommand(productId, "Producto Test", 0, 100.0m)
             }
         );
 

@@ -28,30 +28,27 @@ public sealed class CreateOrderCommandHandler : IRequestHandler<CreateOrderComma
     /// <returns>Un <see cref="CreateOrderResponse"/> con el resumen de la orden creada.</returns>
     public async Task<CreateOrderResponse> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        // 1. Instanciar la entidad Order con tipo explícito
-        Order order = new Order(request.CustomerName);
+        // 1. Crear la orden usando el constructor de nacimiento
+        Order order = new Order(request.CustomerId);
 
-        // 2. Mapear y agregar cada ítem a la entidad de dominio
+        // 2. Agregar los ítems usando el tipo explícito CreateOrderItemCommand
         foreach (CreateOrderItemCommand item in request.Items)
         {
+            // Simulación de stock disponible mientras no exista la consulta a IProductRepository
+            int simulatedAvailableStock = int.MaxValue;
+
             order.AddItem(
                 item.ProductId,
-                $"Producto-{item.ProductId}",
+                item.ProductName,
                 item.Quantity,
                 item.UnitPrice,
-                0
-            );
+                simulatedAvailableStock);
         }
 
-        // 3. Persistir en el repositorio usando el método expuesto por IOrderRepository (SaveAsync / Add)
+        // 3. Guardar en el repositorio
         await _orderRepository.SaveAsync(order, cancellationToken);
 
-        // 4. Mapear y retornar la DTO de respuesta usando las propiedades del Dominio (Total / CreatedAt)
-        return new CreateOrderResponse(
-            order.Id,
-            request.CustomerName,
-            order.Total,
-            order.CreatedAt
-        );
+        // 4. Retornar la respuesta encapsulated en CreateOrderResponse
+        return new CreateOrderResponse(order.Id);
     }
 }

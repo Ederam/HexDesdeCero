@@ -20,10 +20,10 @@ public class OrdersEndpointTests : IClassFixture<WebApplicationFactory<Program>>
     {
         // Arrange
         CreateOrderCommand command = new CreateOrderCommand(
-            CustomerName: "Camilo Ramírez",
+            CustomerId: "Camilo Ramírez",
             Items: new List<CreateOrderItemCommand>
             {
-                new CreateOrderItemCommand(Guid.NewGuid(), Quantity: 2, UnitPrice: 150.0m)
+                new CreateOrderItemCommand(Guid.NewGuid(), "Producto Test", 2, 150.0m)
             }
         );
 

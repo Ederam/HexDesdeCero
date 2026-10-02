@@ -7,9 +7,4 @@
 /// <param name="CustomerName">Nombre del cliente registrado en la orden.</param>
 /// <param name="TotalAmount">Monto total calculado de la orden.</param>
 /// <param name="CreatedAt">Fecha y hora UTC en la que se registró la orden.</param>
-public sealed record CreateOrderResponse(
-    Guid Id,
-    string CustomerName,
-    decimal TotalAmount,
-    DateTime CreatedAt
-);
+public sealed record CreateOrderResponse(Guid Id);

@@ -9,13 +9,13 @@ namespace Tienda.Application.Orders.Commands.CreateOrder;
 public sealed class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
     /// <summary>
-    /// Inicializa las reglas de validación para el nombre del cliente y sus ítems.
+    /// Inicializa las reglas de validación para el identificador del cliente y sus ítems.
     /// </summary>
     public CreateOrderCommandValidator()
     {
-        RuleFor(x => x.CustomerName)
-            .NotEmpty().WithMessage("El nombre del cliente es obligatorio.")
-            .MaximumLength(100).WithMessage("El nombre del cliente no debe superar los 100 caracteres.");
+        RuleFor(x => x.CustomerId)
+            .NotEmpty().WithMessage("El identificador del cliente es obligatorio.")
+            .MaximumLength(100).WithMessage("El identificador del cliente no debe superar los 100 caracteres.");
 
         RuleFor(x => x.Items)
             .NotEmpty().WithMessage("La orden debe incluir al menos un producto.");

@@ -20,21 +20,22 @@ public class CreateOrderCommandHandlerTests
     [Fact]
     public async Task Handle_ShouldCreateAndSaveOrder_WhenCommandIsValid()
     {
+        // Arrange
         Guid productId = Guid.NewGuid();
         CreateOrderCommand command = new CreateOrderCommand(
-            CustomerName: "Camilo Ramírez",
+            CustomerId: "Camilo Ramírez",
             Items: new List<CreateOrderItemCommand>
             {
-                new CreateOrderItemCommand(productId, Quantity: 2, UnitPrice: 100.0m)
+                new CreateOrderItemCommand(productId, "Producto Test", 2, 100.0m)
             }
         );
 
+        // Act
         CreateOrderResponse response = await _handler.Handle(command, CancellationToken.None);
 
+        // Assert
         Assert.NotNull(response);
         Assert.NotEqual(Guid.Empty, response.Id);
-        Assert.Equal("Camilo Ramírez", response.CustomerName);
-        Assert.Equal(200.0m, response.TotalAmount);
 
         _orderRepositoryMock.Verify(
             repo => repo.SaveAsync(It.IsAny<Order>(), It.IsAny<CancellationToken>()),

@@ -9,6 +9,6 @@ namespace Tienda.Application.Orders.Commands.CreateOrder;
 /// <param name="CustomerName">Nombre completo del cliente que realiza la compra.</param>
 /// <param name="Items">Lista de ítems o productos incluidos en la orden.</param>
 public sealed record CreateOrderCommand(
-    string CustomerName,
-    List<CreateOrderItemCommand> Items
+    string CustomerId,
+    IReadOnlyCollection<CreateOrderItemCommand> Items
 ) : IRequest<CreateOrderResponse>;
